@@ -112,6 +112,9 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>© 2025 MyHomePlate. All rights reserved.</p>
           <p className="mt-2">
+            Designed and owned by <span className="font-medium text-foreground">Suman Kumar Kaundinya Jujjuru</span>
+          </p>
+          <p className="mt-2">
             MyHomePlate is a platform connecting home chefs and customers. Each chef is independently responsible for
             food safety and compliance.
           </p>
