@@ -78,7 +78,7 @@ const Navbar = () => {
               Browse Meals
             </Link>
             {user && userRole === "chef" && (
-              <Link to="/chef/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link to="/partner" className="text-sm font-medium hover:text-primary transition-colors">
                 My Kitchen
               </Link>
             )}
@@ -120,7 +120,7 @@ const Navbar = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {userRole === "chef" && (
-                    <DropdownMenuItem onClick={() => navigate("/chef/dashboard")}>
+                    <DropdownMenuItem onClick={() => navigate("/partner")}>
                       <ChefHat className="mr-2 h-4 w-4" />
                       <span>My Kitchen</span>
                     </DropdownMenuItem>
