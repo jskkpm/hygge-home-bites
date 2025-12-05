@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
+import AuthModal from "@/components/AuthModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +38,9 @@ const MealDetail = () => {
   const [spiceLevel, setSpiceLevel] = useState<string>("");
   const [oilPreference, setOilPreference] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
-    // Get current user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -62,7 +64,6 @@ const MealDetail = () => {
 
       if (error) throw error;
 
-      // Fetch chef name separately
       const { data: profile } = await supabase
         .from("profiles")
         .select("name")
@@ -76,7 +77,6 @@ const MealDetail = () => {
       
       setMeal(mealData);
       
-      // Set default preferences
       if (mealData.spice_levels && mealData.spice_levels.length > 0) {
         setSpiceLevel(mealData.spice_levels[0]);
       }
@@ -94,8 +94,7 @@ const MealDetail = () => {
 
   const handleOrder = async () => {
     if (!user) {
-      toast.error("Please sign in to place an order");
-      navigate("/login");
+      setShowAuthModal(true);
       return;
     }
 
@@ -106,7 +105,6 @@ const MealDetail = () => {
     try {
       const totalPrice = meal.price * quantity;
 
-      // Create order
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
@@ -122,7 +120,6 @@ const MealDetail = () => {
 
       if (orderError) throw orderError;
 
-      // Create order item with customizations
       const { error: itemError } = await supabase
         .from("order_items")
         .insert({
@@ -139,7 +136,6 @@ const MealDetail = () => {
 
       toast.success("Order placed! Redirecting to payment...");
       
-      // TODO: Integrate with Stripe checkout here
       setTimeout(() => {
         navigate("/orders");
       }, 1500);
@@ -175,6 +171,11 @@ const MealDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${meal.title} - MyHomePlate`}
+        description={`Order ${meal.title} from ${meal.chef_name}. ${meal.description.substring(0, 120)}...`}
+        image={meal.image_url || undefined}
+      />
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <Button
@@ -215,7 +216,7 @@ const MealDetail = () => {
                 <ChefHat className="h-4 w-4 mr-2" />
                 <span>by {meal.chef_name}</span>
               </div>
-              <p className="text-3xl font-bold text-primary mb-6">kr {meal.price}</p>
+              <p className="text-3xl font-bold text-primary mb-6">₹{meal.price}</p>
             </div>
 
             <div>
@@ -277,7 +278,7 @@ const MealDetail = () => {
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-lg font-semibold">Total:</span>
                     <span className="text-2xl font-bold text-primary">
-                      kr {(meal.price * quantity).toFixed(2)}
+                      ₹{(meal.price * quantity).toFixed(2)}
                     </span>
                   </div>
                   <Button
@@ -312,6 +313,8 @@ const MealDetail = () => {
           </div>
         </div>
       </div>
+
+      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   );
 };
