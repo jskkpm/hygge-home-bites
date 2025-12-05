@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
 import { ChefCard } from "@/components/ChefCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,6 +124,10 @@ const Chefs = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Our Home Chefs - MyHomePlate"
+        description="Meet verified home chefs in your area cooking authentic Indian dishes. Browse profiles, ratings, and specialties. Order fresh homemade meals today."
+      />
       <Navbar />
       
       <main className="container mx-auto px-4 py-8">
